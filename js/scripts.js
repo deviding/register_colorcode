@@ -229,6 +229,14 @@ function calcReverseRegistor(registorStr) {
 	registorValStr = registorValStr.replace("Ω", "");
 
 	try {
+		// 桁などを修正
+		let errorStr = "";
+		[registorValStr, errorStr] = digitAdjustment(registorValStr);
+		if (errorStr != "") {
+			alert(errorStr);
+			return;
+		}
+
 		// 小数点があれば削除してフラグを立てる
 		let is_digit = false;
 		if (registorValStr.indexOf(".") >= 0) {
@@ -282,6 +290,81 @@ function isToleValOk(toleVal) {
 	
 	if (TOLE_MAP.get(tole) == null) { return false; }
 	return true;
+}
+
+// 桁数などを判定する関数
+function digitAdjustment(registorVal) {
+	let registorValStr = registorVal;
+	let errorStr = "";
+	let isUnit = false;
+	let isDigit = false;
+
+	const m_index = registorValStr.indexOf("M");
+	const k_index = registorValStr.indexOf("k");
+
+	// 単位が複数ある場合はエラー
+	if (m_index > 0 && k_index > 0) {
+		errorStr = "単位のMかkはどちらか一方のみを使ってください";
+		return [registorValStr, errorStr];
+	}
+
+	const lastChar = registorValStr.charAt(registorValStr.length-1);
+	if (m_index > 0 || k_index > 0) {
+		isUnit = true;
+		if (lastChar != 'M' && lastChar != 'k') {
+			// 最後の桁が単位でないならエラー
+			errorStr = "単位のMやkを使うときは必ずΩの前につけてください";
+			return [registorValStr, errorStr];
+		}
+	}
+
+	// 小数点があるかを確認
+	if (registorValStr.indexOf(".") > 0) { isDigit = true; }
+
+	// 桁を確認
+	const registorLength = isUnit ? registorValStr.length-1 : registorValStr.length;
+	if (isDigit) {
+		// 小数点以下が出る場合
+		if (registorValStr.charAt(0) == '0') {
+			if (isUnit) {
+				if (registorLength > 4) {
+					errorStr = "1より小さく単位を使う場合、小数点以下は必ず2桁以内にしてください";
+				}
+			} else {
+				if (registorLength > 5) {
+					errorStr = "1より小さい場合、小数点以下は必ず3桁以内にしてください";
+				}
+			}
+		} else {
+			if (registorLength > 3) {
+				errorStr = "1より大きい場合、小数点以下は必ず1桁以内にしてください";
+				if (isUnit) { errorStr = "1より大きく単位を使う場合、小数点以下は必ず1桁以内にしてください"; }
+			}
+		}
+	} else if (isUnit) {
+		// 小数点がなく単位がある場合
+		if (registorLength > 3) {
+			errorStr = "単位を使う場合は、必ず3桁以内にしてください";
+		}
+	} else {
+		// 小数点も単位ない場合
+		if (registorLength > 9) {
+			errorStr = "表現できる抵抗の最大値を超えています";
+			return [registorValStr, errorStr];
+		}
+
+		let ohmVal = Number(registorValStr);
+		if (registorLength > 6) {
+			// Mの単位を付ける
+			ohmVal = ohmVal / 1000000;
+			registorValStr = String(ohmVal) + "M";
+		} else if (registorLength > 3) {
+			// kの単位を付ける
+			ohmVal = ohmVal / 1000;
+			registorValStr = String(ohmVal) + "k";
+		}
+	}
+	return [registorValStr, errorStr];
 }
 
 // 第3数字を計算する関数
