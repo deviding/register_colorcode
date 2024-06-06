@@ -1,9 +1,3 @@
-const MODE = {
-	VAL : 1,
-	MULTI : 2,
-	TOLE : 3
-}
-
 // 値のカラーコードのマップ
 const VALUE_MAP = new Map();
 VALUE_MAP.set("0", "black");
@@ -42,6 +36,21 @@ TOLE_MAP.set("2", "red");
 TOLE_MAP.set("5", "gold");
 TOLE_MAP.set("10", "silver");
 
+// 色と日本語のマップ
+const COLOR_MAP = new Map();
+COLOR_MAP.set("black", "黒");
+COLOR_MAP.set("brown", "茶");
+COLOR_MAP.set("red", "赤");
+COLOR_MAP.set("orange", "橙");
+COLOR_MAP.set("yellow", "黄");
+COLOR_MAP.set("green", "緑");
+COLOR_MAP.set("blue", "青");
+COLOR_MAP.set("purple", "紫");
+COLOR_MAP.set("gray", "灰");
+COLOR_MAP.set("white", "白");
+COLOR_MAP.set("gold", "金");
+COLOR_MAP.set("silver", "銀");
+
 
 $(function() {
 	// 第1数字が変更された時の処理
@@ -50,7 +59,7 @@ $(function() {
 		const color = VALUE_MAP.get(val);
 		// 色を変更
 		$("#firstText").removeClass();
-		$("#firstText").addClass(color + "-txt");
+		if (color != undefined) {	$("#firstText").addClass(color + "-txt");	}
 		// canvasに縦線を引く
 		drawLine(color, 20);
 		// 抵抗値を計算
@@ -63,7 +72,7 @@ $(function() {
 		const color = VALUE_MAP.get(val);
 		// 色を変更
 		$("#secondText").removeClass();
-		$("#secondText").addClass(color + "-txt");
+		if (color != undefined) {	$("#secondText").addClass(color + "-txt"); }
 		// canvasに縦線を引く
 		drawLine(color, 40);
 		// 抵抗値を計算
@@ -76,7 +85,7 @@ $(function() {
 		const color = MULTI_MAP.get(val);
 		// 色を変更
 		$("#thirdText").removeClass();
-		$("#thirdText").addClass(color + "-txt");
+		if (color != undefined) {	$("#thirdText").addClass(color + "-txt");	}
 		// canvasに縦線を引く
 		drawLine(color, 60);
 		// 抵抗値を計算
@@ -89,7 +98,7 @@ $(function() {
 		const color = TOLE_MAP.get(val);
 		// 色を変更
 		$("#forthText").removeClass();
-		$("#forthText").addClass(color + "-txt");
+		if (color != undefined) { $("#forthText").addClass(color + "-txt");	}
 		// canvasに縦線を引く
 		drawLine(color, 80);
 		// 抵抗値を計算
@@ -99,95 +108,17 @@ $(function() {
 	// 逆引きボタンが押下された時の処理
 	$("#reverseBtn").on("click", function(){
 		const registorStr = $("#registorVal").val();
-
-		// 許容範囲の部分があれば削除
-		let registorVal = "";
-		let toleVal = "";
-		if (registorStr.indexOf("±") >= 0) {
-			registorVal = registorStr.substring(0, registorStr.indexOf("±"));
-			toleVal = registorStr.substr(registorStr.indexOf("±"));
-		} else {
-			registorVal = registorStr;
-		}
-		// console.log(registorVal);
-		// console.log(toleVal);
-
-		// 最終文字がΩか判定
-		if (registorVal.charAt(registorVal.length-1) != 'Ω') {
-			console.log("許容範囲の前、または末尾は必ずΩを設定してください。");
+	
+		// 入力文字列が正しいかを判定
+		const tole_regex = /^\d+(?:\.\d+)?[kM]?Ω±\d+(?:\.\d+)?%$/;
+		const registor_regex = /^\d+(?:\.\d+)?[kM]?Ω$/;
+		if (!tole_regex.test(registorStr) && !registor_regex.test(registorStr)) {
+			alert("抵抗値には正しい書式を入力してください");
 			return;
 		}
-		// Ωを削除
-		registorVal = registorVal.replace("Ω", "");
 
-		// 小数点があれば削除してフラグを立てる
-		let is_digit = false;
-		if (registorVal.indexOf(".") >= 0) {
-			is_digit = true;
-			registorVal = registorVal.replace(".", "");
-		}
-
-		// 第3数字を判定
-		let thirdVal = 1;
-		let isThirdDigit = false;
-		// 最終行を判定
-		const thirdDigit = registorVal.charAt(registorVal.length-1);
-		if (thirdDigit == 'k') {
-			thirdVal = 1000;
-			registorVal = registorVal.replace("k", "");
-			isThirdDigit = true;
-		} else if (thirdDigit == 'M') {
-			thirdVal = 1000000;
-			registorVal = registorVal.replace("M", "");
-			isThirdDigit = true;
-		}
-		// 1桁目が0の場合は0が続くだけ桁を下げる
-		if (registorVal.charAt(0) == '0') {
-			for (let i = 0; i < registorVal.length; i++) {
-				if (registorVal.charAt(i) != '0') {
-					break;
-				}
-				thirdVal = thirdVal / 10;
-			}
-			registorVal = registorVal.replaceAll("0", "");
-		}
-		// 小数点がある場合は更に1桁下げる
-		if (is_digit) {
-			thirdVal = thirdVal / 10;
-		}
-
-		// 第1数字、第2数字を判定
-		let firstValStr = "";
-		let secondValStr = "";
-
-		if (registorVal.length == 1) {
-			// 第2数字が0の場合
-			firstValStr = registorVal.charAt(0);
-			secondValStr = "0";
-			if (isThirdDigit && !is_digit) {
-				thirdVal = thirdVal / 10;
-			}
-		} else {
-			firstValStr = registorVal.charAt(0);
-			secondValStr = registorVal.charAt(1);
-			if (registorVal.length == 3) {
-				thirdVal = thirdVal * 10;
-			}
-		}
-		console.log("---\n" + firstValStr + "\n" + secondValStr + "\n" +String(thirdVal));
-
-		// 許容範囲を設定
-		if (toleVal == "") {
-			toleVal = "5";
-		} else {
-			toleVal = toleVal.substring(1, toleVal.length-1);
-		}
-
-		// カラーコードを変更
-		$("#firstVal").val(firstValStr).change();
-		$("#secondVal").val(secondValStr).change();
-		$("#thirdVal").val(String(thirdVal)).change();
-		$("#forthVal").val(toleVal).change();
+		// 抵抗値からカラーコードを逆引き
+		calcReverseRegistor(registorStr);
 	});
 });
 
@@ -200,7 +131,7 @@ function drawLine(color, wPercent) {
 	xPos = resigtorCanvas.width * wPercent / 100;
 	lineWidh = 0.1 * resigtorCanvas.width;
 
-	if (color == "") {
+	if (color == undefined) {
 		// 色がない場合は色を消す設定
 		canvasCtx.globalCompositeOperation = "destination-out"
 	} else {
@@ -208,11 +139,25 @@ function drawLine(color, wPercent) {
 		canvasCtx.globalCompositeOperation = "source-over";
 		canvasCtx.strokeStyle = color;
 	}
+	// 線を引く
 	canvasCtx.lineWidth = lineWidh;
 	canvasCtx.beginPath();
 	canvasCtx.moveTo(xPos, 1);
 	canvasCtx.lineTo(xPos, resigtorCanvas.height-1);
 	canvasCtx.stroke();
+
+	if (color != undefined) {
+		// テキストの色を設定
+		if (color == "black" || color == "blue" || color == "gray" || color == "purple") {
+			canvasCtx.fillStyle = "white";
+		} else {
+			canvasCtx.fillStyle = "black";
+		}
+		// フォントサイズとフォントファミリーを設定
+		canvasCtx.font = "30px Osaka";
+		// 文字を書く
+		canvasCtx.fillText(COLOR_MAP.get(color), xPos-lineWidh/2, 85);
+	}
 }
 
 // カラーコードから抵抗値を計算する関数
@@ -264,3 +209,135 @@ function calcRegistorVal() {
 	$("#registorVal").val(resValStr);
 }
 
+// 抵抗値の値からカラーコードを計算する関数
+function calcReverseRegistor(registorStr) {
+	// 抵抗値と許容範囲を分割して取得
+	let [registorValStr, toleVal] = getRegistorToleVal(registorStr);
+
+	// 許容範囲が正しい値かどうか判定
+	if (!isToleValOk(toleVal)) {
+		alert("許容範囲の値を適切な値に設定してください。");
+		return;
+	}
+
+	// 抵抗値の最終文字がΩか判定
+	if (registorValStr.charAt(registorValStr.length-1) != 'Ω') {
+		alert("許容範囲の前、または末尾は必ずΩを設定してください。");
+		return;
+	}
+	// Ωを削除
+	registorValStr = registorValStr.replace("Ω", "");
+
+	try {
+		// 小数点があれば削除してフラグを立てる
+		let is_digit = false;
+		if (registorValStr.indexOf(".") >= 0) {
+			is_digit = true;
+			registorValStr = registorValStr.replace(".", "");
+		}
+		// 第3数字を判定
+		let thirdVal = 1;
+		[thirdVal, registorValStr] = calcThirdVal(registorValStr, is_digit);
+		// 第1数字、第2数字を判定
+		let [firstValStr, secondValStr] = calcFirstSecondVal(registorValStr);
+		// 許容範囲を設定
+		if (toleVal == "") {
+			toleVal = "5";
+		} else {
+			toleVal = toleVal.substring(1, toleVal.length-1);
+		}
+
+		// カラーコードを変更
+		$("#firstVal").val(firstValStr).change();
+		$("#secondVal").val(secondValStr).change();
+		$("#thirdVal").val(String(thirdVal)).change();
+		$("#forthVal").val(toleVal).change();
+	} catch (e) {
+		alert(e.message);
+		return;
+	}
+}
+
+// 抵抗部分と許容範囲を分割して取得する関数
+function getRegistorToleVal(registorStr) {
+	// 許容範囲の部分があれば分割
+	let registorVal = "";
+	let toleVal = "";
+	if (registorStr.indexOf("±") >= 0) {
+		registorVal = registorStr.substring(0, registorStr.indexOf("±"));
+		toleVal = registorStr.substr(registorStr.indexOf("±"));
+	} else {
+		registorVal = registorStr;
+	}
+	return [registorVal, toleVal];
+}
+
+// 許容範囲の値が適切かを判定する関数
+function isToleValOk(toleVal) {
+	if (toleVal == "") { return true; }
+
+	let tole = "";
+	tole = toleVal.replace("±", "");
+	tole = tole.replace("%", "");
+	
+	if (TOLE_MAP.get(tole) == null) { return false; }
+	return true;
+}
+
+// 第3数字を計算する関数
+function calcThirdVal(registorVal, is_digit) {
+	let thirdVal = 1;
+	let isThirdDigit = false;
+	let registorValStr = registorVal;
+	// 最終行を判定
+	const thirdDigit = registorValStr.charAt(registorValStr.length-1);
+	if (thirdDigit == 'k') {
+		thirdVal = 1000;
+		registorValStr = registorVal.replace("k", "");
+		isThirdDigit = true;
+	} else if (thirdDigit == 'M') {
+		thirdVal = 1000000;
+		registorValStr = registorVal.replace("M", "");
+		isThirdDigit = true;
+	}
+	// 1桁目が0の場合は0が続くだけ桁を下げる
+	if (registorValStr.charAt(0) == '0') {
+		for (let i = 0; i < registorValStr.length; i++) {
+			if (registorValStr.charAt(i) != '0') {
+				break;
+			}
+			thirdVal = thirdVal / 10;
+		}
+		registorValStr = registorValStr.replaceAll("0", "");
+	}
+	// 小数点がある場合は更に1桁下げる
+	if (is_digit) { thirdVal = thirdVal / 10;	}
+
+	if (registorValStr.length == 1) {
+		// 第2数字が0の場合
+		if (isThirdDigit && !is_digit) { thirdVal = thirdVal / 10; }
+	} else {
+		// 第2数字が0以外の場合
+		if (registorValStr.length == 3) { thirdVal = thirdVal * 10; }
+	}
+
+	return [thirdVal, registorValStr];
+}
+
+// 第1数字と第2数字を計算する関数
+function calcFirstSecondVal(registorValStr) {
+	let firstValStr = "";
+	let secondValStr = "";
+
+	if (registorValStr.length == 1) {
+		// 第2数字が0の場合
+		firstValStr = registorValStr.charAt(0);
+		secondValStr = "0";
+	} else {
+		// 第2数字が0以外の場合
+		firstValStr = registorValStr.charAt(0);
+		secondValStr = registorValStr.charAt(1);
+	}
+	
+	return [firstValStr, secondValStr];
+}

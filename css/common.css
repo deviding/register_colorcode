@@ -17,33 +17,33 @@
 }
 
 .black-txt {
-	background-color: #000000;
-	color: #ffffff;
+	background-color: black;
+	color: white;
 }
 
 .brown-txt {
 	background-color: brown;
-	color: #000000;
+	color: black;
 }
 
 .red-txt {
 	background-color: red;
-	color: #000000;
+	color: black;
 }
 
 .orange-txt {
 	background-color: orange;
-	color: #000000;
+	color: black;
 }
 
 .yellow-txt {
 	background-color: yellow;
-	color: #000000;
+	color: black;
 }
 
 .green-txt {
 	background-color: green;
-	color: #000000;
+	color: black;
 }
 
 .blue-txt {
@@ -53,7 +53,7 @@
 
 .purple-txt {
 	background-color: purple;
-	color: #000000;
+	color: white;
 }
 
 .gray-txt {
@@ -63,15 +63,15 @@
 
 .white-txt {
 	background-color: white;
-	color: #000000;
+	color: black;
 }
 
 .gold-txt {
 	background-color: gold;
-	color: #000000;
+	color: black;
 }
 
 .silver-txt {
 	background-color: silver;
-	color: #000000;
+	color: black;
 }
