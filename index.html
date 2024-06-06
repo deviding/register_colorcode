@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Cache-Control" content="no-cache">
+	<title>抵抗カラーコード計算</title>
+
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+	<link rel="stylesheet" href="./css/common.css">
+</head>
+<body>
+<div class="">
+	<div class="container-fluid">
+		<!-- タイトル表示 -->
+		<div class="row text-center">
+			<h2>抵抗カラーコード計算</h2>
+		</div>
+		<!-- 情報表示 -->
+		<div class="row align-items-center">
+			<!-- 左側入力部分 -->
+			<div class="col-7">
+				<div class="row">
+					<div class="col-3">
+						<div class="border rounded">
+							<div class="row-6"><div id="firstText">第1数字</div></div>
+							<div class="row-6">
+								<select id="firstVal" class="form-select form-select-sm">
+									<option selected value=""></option>
+									<option value="0">黒(0)</option>
+									<option value="1">茶(1)</option>
+									<option value="2">赤(2)</option>
+									<option value="3">橙(3)</option>
+									<option value="4">黄(4)</option>
+									<option value="5">緑(5)</option>
+									<option value="6">青(6)</option>
+									<option value="7">紫(7)</option>
+									<option value="8">灰(8)</option>
+									<option value="9">白(9)</option>
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="col-3">
+						<div class="border rounded">
+							<div class="row-6"><div id="secondText">第2数字</div></div>
+							<select id="secondVal" class="form-select form-select-sm">
+								<option selected></option>
+								<option value="0">黒(0)</option>
+								<option value="1">茶(1)</option>
+								<option value="2">赤(2)</option>
+								<option value="3">橙(3)</option>
+								<option value="4">黄(4)</option>
+								<option value="5">緑(5)</option>
+								<option value="6">青(6)</option>
+								<option value="7">紫(7)</option>
+								<option value="8">灰(8)</option>
+								<option value="9">白(9)</option>
+							</select>
+						</div>
+					</div>
+					<div class="col-3">
+						<div class="border rounded">
+							<div class="row-6"><div id="thirdText">第3数字</div></div>
+							<select id="thirdVal" class="form-select form-select-sm">
+								<option selected></option>
+								<option value="0.001">白(10^-3)</option>
+								<option value="0.01">銀(10^-2)</option>
+								<option value="0.1">金(10^-1)</option>
+								<option value="1">黒(10^0)</option>
+								<option value="10">茶(10^1)</option>
+								<option value="100">赤(10^2)</option>
+								<option value="1000">橙(10^3)</option>
+								<option value="10000">黄(10^4)</option>
+								<option value="100000">緑(10^5)</option>
+								<option value="1000000">青(10^6)</option>
+								<option value="10000000">紫(10^7)</option>
+							</select>
+						</div>
+					</div>
+					<div class="col-3">
+						<div class="border rounded">
+							<div class="row-6"><div id="forthText">第4数字</div></div>
+							<select id="forthVal" class="form-select form-select-sm">
+								<option selected></option>
+								<option value="0.05">橙(±0.05%)</option>
+								<option value="0.1">紫(±0.1%)</option>
+								<option value="0.25">青(±0.25%)</option>
+								<option value="0.5">緑(±0.5%)</option>
+								<option value="1">茶(±1%)</option>
+								<option value="2">赤(±2%)</option>
+								<option value="5">金(±5%)</option>
+								<option value="10">銀(±10%)</option>
+								<!-- <option value="black">黒</option> -->
+								<!-- <option value="yellow">黄</option> -->
+								<!-- <option value="gray">灰</option> -->
+								<!-- <option value="white">白</option> -->
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="row mt-4">
+					<div class="col-9">
+						<div class="border rounded">
+							<div class="row-6"><div class="col-6">抵抗値</div></div>
+							<div class="row-6">
+								<input id="registorVal" type="text" class="form-control">
+							</div>
+						</div>
+					</div>
+					<div class="col-3">
+						<button id="reverseBtn" type="button" class="btn btn-primary">抵抗値から<br>カラー逆引き</button>
+					</div>
+				</div>
+			</div>
+			<!-- 右側画像部分 -->
+			<div class="col-5" style="max-width: 100%;">
+				<!-- 画像 -->
+				<div class="container">
+					<div class="image-container border">
+						<img src="./img/img.svg" alt="Sample Image">
+						<canvas id="resistorCanvas"></canvas>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+<script src="./js/scripts.js"></script>
+</body>
+</html>
